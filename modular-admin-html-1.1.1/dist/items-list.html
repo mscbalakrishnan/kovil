@@ -1,0 +1,1682 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title> ModularAdmin - Free Dashboard Theme | HTML Version </title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+        <!-- Place favicon.ico in the root directory -->
+        <link rel="stylesheet" href="css/vendor.css">
+		<style>
+		.page_navigation , .alt_page_navigation{
+	padding-bottom: 10px;
+}
+		</style>
+        <!-- Theme initialization -->
+        <script>
+            var themeSettings = (localStorage.getItem('themeSettings')) ? JSON.parse(localStorage.getItem('themeSettings')) :
+            {};
+            var themeName = themeSettings.themeName || '';
+            if (themeName)
+            {
+                document.write('<link rel="stylesheet" id="theme-style" href="css/app-' + themeName + '.css">');
+            }
+            else
+            {
+                document.write('<link rel="stylesheet" id="theme-style" href="css/app.css">');
+            }
+        </script>
+		<script>
+		;
+(function($) { /*******************************************************************************************/
+	// jquery.pajinate.js - version 0.4
+	// A jQuery plugin for paginating through any number of DOM elements
+	// 
+	// Copyright (c) 2010, Wes Nolte (http://wesnolte.com)
+	// Licensed under the MIT License (MIT-LICENSE.txt)
+	// http://www.opensource.org/licenses/mit-license.php
+	// Created: 2010-04-16 | Updated: 2010-04-26
+	//
+	/*******************************************************************************************/
+
+	$.fn.pajinate = function(options) {
+		// Set some state information
+		var current_page = 'current_page';
+		var items_per_page = 'items_per_page';
+
+		var meta;
+
+		// Setup default option values
+		var defaults = {
+			item_container_id: '.content',
+			items_per_page: 10,
+			nav_panel_id: '.page_navigation',
+			nav_info_id: '.info_text',
+			num_page_links_to_display: 20,
+			start_page: 0,
+			wrap_around: false,
+			nav_label_first: 'First',
+			nav_label_prev: 'Prev',
+			nav_label_next: 'Next',
+			nav_label_last: 'Last',
+			nav_order: ["first", "prev", "num", "next", "last"],
+			nav_label_info: 'Showing {0}-{1} of {2} results',
+			show_first_last: true,
+			abort_on_small_lists: false,
+			jquery_ui: false,
+			jquery_ui_active: "ui-state-highlight",
+			jquery_ui_default: "ui-state-default",
+			jquery_ui_disabled: "ui-state-disabled"
+		};
+
+		var options = $.extend(defaults, options);
+		var $item_container;
+		var $page_container;
+		var $items;
+		var $nav_panels;
+		var total_page_no_links;
+		var jquery_ui_default_class = options.jquery_ui ? options.jquery_ui_default : '';
+		var jquery_ui_active_class = options.jquery_ui ? options.jquery_ui_active : '';
+		var jquery_ui_disabled_class = options.jquery_ui ? options.jquery_ui_disabled : '';
+
+		return this.each(function() {
+			$page_container = $(this);
+			$item_container = $(this).find(options.item_container_id);
+			$items = $page_container.find(options.item_container_id).children();
+
+			if (options.abort_on_small_lists && options.items_per_page >= $items.size()) return $page_container;
+
+			meta = $page_container;
+
+			// Initialize meta data
+			meta.data(current_page, 0);
+			meta.data(items_per_page, options.items_per_page);
+
+			// Get the total number of items
+			var total_items = $item_container.children().size();
+
+			// Calculate the number of pages needed
+			var number_of_pages = Math.ceil(total_items / options.items_per_page);
+
+			// Construct the nav bar
+			var more = '<span class="ellipse more">...</span>';
+			var less = '<span class="ellipse less">...</span>';
+			var first = !options.show_first_last ? '' : '<a class="first_link ' + jquery_ui_default_class + '" href="">' + options.nav_label_first + '</a>';
+			var last = !options.show_first_last ? '' : '<a class="last_link ' + jquery_ui_default_class + '" href="">' + options.nav_label_last + '</a>';
+
+			var navigation_html = "";
+
+			for (var i = 0; i < options.nav_order.length; i++) {
+				switch (options.nav_order[i]) {
+				case "first":
+					navigation_html += first;
+					break;
+				case "last":
+					navigation_html += last;
+					break;
+				case "next":
+					navigation_html += '<a class="next_link ' + jquery_ui_default_class + '" href="">' + options.nav_label_next + '</a>';
+					break;
+				case "prev":
+					navigation_html += '<a class="previous_link ' + jquery_ui_default_class + '" href="">' + options.nav_label_prev + '</a>';
+					break;
+				case "num":
+					navigation_html += less;
+					var current_link = 0;
+					while (number_of_pages > current_link) {
+						navigation_html += '<a class="page_link ' + jquery_ui_default_class + '" href="" longdesc="' + current_link + '">' + (current_link + 1) + '</a>';
+						current_link++;
+					}
+					navigation_html += more;
+					break;
+				default:
+					break;
+				}
+
+			}
+
+			// And add it to the appropriate area of the DOM	
+			$nav_panels = $page_container.find(options.nav_panel_id);
+			$nav_panels.html(navigation_html).each(function() {
+
+				$(this).find('.page_link:first').addClass('first');
+				$(this).find('.page_link:last').addClass('last');
+
+			});
+
+			// Hide the more/less indicators
+			$nav_panels.children('.ellipse').hide();
+
+			// Set the active page link styling
+			$nav_panels.find('.previous_link').next().next().addClass('active_page ' + jquery_ui_active_class);
+
+			/* Setup Page Display */
+			// And hide all pages
+			$items.hide();
+			// Show the first page			
+			$items.slice(0, meta.data(items_per_page)).show();
+
+			/* Setup Nav Menu Display */
+			// Page number slices
+			total_page_no_links = $page_container.find(options.nav_panel_id + ':first').children('.page_link').size();
+			options.num_page_links_to_display = Math.min(options.num_page_links_to_display, total_page_no_links);
+
+			$nav_panels.children('.page_link').hide(); // Hide all the page links
+			// And only show the number we should be seeing
+			$nav_panels.each(function() {
+				$(this).children('.page_link').slice(0, options.num_page_links_to_display).show();
+			});
+
+			/* Bind the actions to their respective links */
+
+			// Event handler for 'First' link
+			$page_container.find('.first_link').click(function(e) {
+				e.preventDefault();
+
+				movePageNumbersRight($(this), 0);
+				gotopage(0);
+			});
+
+			// Event handler for 'Last' link
+			$page_container.find('.last_link').click(function(e) {
+				e.preventDefault();
+				var lastPage = total_page_no_links - 1;
+				movePageNumbersLeft($(this), lastPage);
+				gotopage(lastPage);
+			});
+
+			// Event handler for 'Prev' link
+			$page_container.find('.previous_link').click(function(e) {
+				e.preventDefault();
+				showPrevPage($(this));
+			});
+
+
+			// Event handler for 'Next' link
+			$page_container.find('.next_link').click(function(e) {
+				e.preventDefault();
+				showNextPage($(this));
+			});
+
+			// Event handler for each 'Page' link
+			$page_container.find('.page_link').click(function(e) {
+				e.preventDefault();
+				gotopage($(this).attr('longdesc'));
+			});
+
+			// Goto the required page
+			gotopage(parseInt(options.start_page));
+			toggleMoreLess();
+			if (!options.wrap_around) tagNextPrev();
+		});
+
+		function showPrevPage(e) {
+			new_page = parseInt(meta.data(current_page)) - 1;
+
+			// Check that we aren't on a boundary link
+			if ($(e).siblings('.active_page').prev('.page_link').length == true) {
+				movePageNumbersRight(e, new_page);
+				gotopage(new_page);
+			}
+			else if (options.wrap_around) {
+				gotopage(total_page_no_links - 1);
+			}
+
+		};
+
+		function showNextPage(e) {
+			new_page = parseInt(meta.data(current_page)) + 1;
+
+			// Check that we aren't on a boundary link
+			if ($(e).siblings('.active_page').next('.page_link').length == true) {
+				movePageNumbersLeft(e, new_page);
+				gotopage(new_page);
+			}
+			else if (options.wrap_around) {
+				gotopage(0);
+			}
+
+		};
+
+		function gotopage(page_num) {
+
+			page_num = parseInt(page_num, 10)
+
+			var ipp = parseInt(meta.data(items_per_page));
+
+			// Find the start of the next slice
+			start_from = page_num * ipp;
+
+			// Find the end of the next slice
+			end_on = start_from + ipp;
+			// Hide the current page	
+			var items = $items.hide().slice(start_from, end_on);
+
+			items.show();
+
+			// Reassign the active class
+			$page_container.find(options.nav_panel_id).children('.page_link[longdesc=' + page_num + ']').addClass('active_page ' + jquery_ui_active_class).siblings('.active_page').removeClass('active_page ' + jquery_ui_active_class);
+
+			// Set the current page meta data							
+			meta.data(current_page, page_num);
+			/*########## Ajout de l'option page courante + nombre de pages*/
+	            	var $current_page = parseInt(meta.data(current_page)+1);
+	            	// Get the total number of items
+	            	var total_items = $item_container.children().size();
+	            	// Calculate the number of pages needed
+	            	var $number_of_pages = Math.ceil(total_items / options.items_per_page);
+            		/*##################################################################*/
+			$page_container.find(options.nav_info_id).html(options.nav_label_info.replace("{0}", start_from + 1).
+			replace("{1}", start_from + items.length).replace("{2}", $items.length).replace("{3}", $current_page).replace("{4}", $number_of_pages));
+
+			// Hide the more and/or less indicators
+			toggleMoreLess();
+
+			// Add a class to the next or prev links if there are no more pages next or previous to the active page
+			tagNextPrev();
+
+			// check if the onPage callback is available and call it
+			if (typeof(options.onPageDisplayed) !== "undefined" ) {
+				options.onPageDisplayed.call(this, page_num + 1)
+			}
+
+		}
+
+		// Methods to shift the diplayed index of page numbers to the left or right
+
+
+		function movePageNumbersLeft(e, new_p) {
+			var new_page = new_p;
+
+			var $current_active_link = $(e).siblings('.active_page');
+
+			if ($current_active_link.siblings('.page_link[longdesc=' + new_page + ']').css('display') == 'none') {
+
+				$nav_panels.each(function() {
+					$(this).children('.page_link').hide() // Hide all the page links
+					.slice(parseInt(new_page - options.num_page_links_to_display + 1), new_page + 1).show();
+				});
+			}
+
+		}
+
+		function movePageNumbersRight(e, new_p) {
+			var new_page = new_p;
+
+			var $current_active_link = $(e).siblings('.active_page');
+
+			if ($current_active_link.siblings('.page_link[longdesc=' + new_page + ']').css('display') == 'none') {
+
+				$nav_panels.each(function() {
+					$(this).children('.page_link').hide() // Hide all the page links
+					.slice(new_page, new_page + parseInt(options.num_page_links_to_display)).show();
+				});
+			}
+		}
+
+		// Show or remove the ellipses that indicate that more page numbers exist in the page index than are currently shown
+
+
+		function toggleMoreLess() {
+
+			if (!$nav_panels.children('.page_link:visible').hasClass('last')) {
+				$nav_panels.children('.more').show();
+			}
+			else {
+				$nav_panels.children('.more').hide();
+			}
+
+			if (!$nav_panels.children('.page_link:visible').hasClass('first')) {
+				$nav_panels.children('.less').show();
+			}
+			else {
+				$nav_panels.children('.less').hide();
+			}
+		}
+
+		/* Add the style class ".no_more" to the first/prev and last/next links to allow custom styling */
+
+		function tagNextPrev() {
+			if ($nav_panels.children('.last').hasClass('active_page')) {
+				$nav_panels.children('.next_link').add('.last_link').addClass('no_more ' + jquery_ui_disabled_class);
+			}
+			else {
+				$nav_panels.children('.next_link').add('.last_link').removeClass('no_more ' + jquery_ui_disabled_class);
+			}
+
+			if ($nav_panels.children('.first').hasClass('active_page')) {
+				$nav_panels.children('.previous_link').add('.first_link').addClass('no_more ' + jquery_ui_disabled_class);
+			}
+			else {
+				$nav_panels.children('.previous_link').add('.first_link').removeClass('no_more ' + jquery_ui_disabled_class);
+			}
+		}
+
+	};
+
+})(jQuery);
+		</script>
+		<script type="text/javascript">
+		$(document).ready(function(){
+				$('#paging_container9').pajinate({
+					num_page_links_to_display : 3,
+					items_per_page : 6,
+                    wrap_around: true,
+                    show_first_last: false
+				});
+			});  
+		</script>
+    </head>
+
+    <body>
+        <div class="main-wrapper">
+            <div class="app" id="app">
+                <header class="header">
+                    <div class="header-block header-block-collapse hidden-lg-up"> <button class="collapse-btn" id="sidebar-collapse-btn">
+    			<i class="fa fa-bars"></i>
+    		</button> </div>
+                    <div class="header-block header-block-search hidden-sm-down">
+                        <form role="search">
+                            <div class="input-container"> <i class="fa fa-search"></i> <input type="search" placeholder="Search">
+                                <div class="underline"></div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="header-block header-block-buttons"> <a href="https://github.com/modularcode/modular-admin-html" class="btn btn-sm header-btn">
+    			<i class="fa fa-github-alt"></i>
+    			<span>View on GitHub</span>
+    		</a> <a href="https://github.com/modularcode/modular-admin-html/stargazers" class="btn btn-sm header-btn">
+    			<i class="fa fa-star"></i>
+    			<span>Star Us</span>
+    		</a> <a href="https://github.com/modularcode/modular-admin-html/releases/download/v1.1.0/modular-admin-html-1.1.0.zip" class="btn btn-sm header-btn">
+    			<i class="fa fa-cloud-download"></i>
+    			<span>Download .zip</span>
+    		</a> </div>
+                    <div class="header-block header-block-nav">
+                        <ul class="nav-profile">
+                            <li class="notifications new"> <a href="" data-toggle="dropdown">
+    			    <i class="fa fa-bell-o"></i>
+    			    <sup>
+    			      <span class="counter">8</span>
+    			    </sup>
+    			  </a>
+                                <div class="dropdown-menu notifications-dropdown-menu">
+                                    <ul class="notifications-container">
+                                        <li>
+                                            <a href="" class="notification-item">
+                                                <div class="img-col">
+                                                    <div class="img" style="background-image: url('assets/faces/3.jpg')"></div>
+                                                </div>
+                                                <div class="body-col">
+                                                    <p> <span class="accent">Zack Alien</span> pushed new commit: <span class="accent">Fix page load performance issue</span>. </p>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="" class="notification-item">
+                                                <div class="img-col">
+                                                    <div class="img" style="background-image: url('assets/faces/5.jpg')"></div>
+                                                </div>
+                                                <div class="body-col">
+                                                    <p> <span class="accent">Amaya Hatsumi</span> started new task: <span class="accent">Dashboard UI design.</span>. </p>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="" class="notification-item">
+                                                <div class="img-col">
+                                                    <div class="img" style="background-image: url('assets/faces/8.jpg')"></div>
+                                                </div>
+                                                <div class="body-col">
+                                                    <p> <span class="accent">Andy Nouman</span> deployed new version of <span class="accent">NodeJS REST Api V3</span> </p>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                    <footer>
+                                        <ul>
+                                            <li> <a href="">
+    			            View All
+    			          </a> </li>
+                                        </ul>
+                                    </footer>
+                                </div>
+                            </li>
+                            <li class="profile dropdown">
+                                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                                    <div class="img" style="background-image: url('https://avatars3.githubusercontent.com/u/3959008?v=3&s=40')"> </div> <span class="name">
+    			      John Doe
+    			    </span> </a>
+                                <div class="dropdown-menu profile-dropdown-menu" aria-labelledby="dropdownMenu1"> <a class="dropdown-item" href="#">
+    			      <i class="fa fa-user icon"></i>
+    			      Profile
+    			    </a> <a class="dropdown-item" href="#">
+    			      <i class="fa fa-bell icon"></i>
+    			      Notifications
+    			    </a> <a class="dropdown-item" href="#">
+    			      <i class="fa fa-gear icon"></i>
+    			      Settings
+    			    </a>
+                                    <div class="dropdown-divider"></div> <a class="dropdown-item" href="login.html">
+    			      <i class="fa fa-power-off icon"></i>
+    			      Logout
+    			    </a> </div>
+                            </li>
+                        </ul>
+                    </div>
+                </header>
+                <aside class="sidebar">
+                    <div class="sidebar-container">
+                        <div class="sidebar-header">
+                            <div class="brand">
+                                <div class="logo"> <span class="l l1"></span> <span class="l l2"></span> <span class="l l3"></span> <span class="l l4"></span> <span class="l l5"></span> </div> Modular Admin </div>
+                        </div>
+                        <nav class="menu">
+                            <ul class="nav metismenu" id="sidebar-menu">
+                                <li> <a href="index.html">
+    						<i class="fa fa-home"></i> Dashboard
+    					</a> </li>
+                                <li class="active open"> <a href="">
+    						<i class="fa fa-th-large"></i> Items Manager
+    						<i class="fa arrow"></i>
+    					</a>
+                                    <ul>
+                                        <li class="active"> <a href="items-list.html">
+    								Items List
+    							</a> </li>
+                                        <li> <a href="item-editor.html">
+    								Item Editor
+    							</a> </li>
+                                    </ul>
+                                </li>
+                                <li> <a href="">
+    						<i class="fa fa-bar-chart"></i> Charts 
+    						<i class="fa arrow"></i>
+    					</a>
+                                    <ul>
+                                        <li> <a href="charts-flot.html">
+    								Flot Charts
+    							</a> </li>
+                                        <li> <a href="charts-morris.html">
+    								Morris Charts
+    							</a> </li>
+                                    </ul>
+                                </li>
+                                <li> <a href="">
+    						<i class="fa fa-table"></i> Tables
+    						<i class="fa arrow"></i>
+    					</a>
+                                    <ul>
+                                        <li> <a href="static-tables.html">
+    								Static Tables
+    							</a> </li>
+                                        <li> <a href="responsive-tables.html">
+    								Responsive Tables
+    							</a> </li>
+                                    </ul>
+                                </li>
+                                <li> <a href="forms.html">
+    						<i class="fa fa-pencil-square-o"></i> Forms
+    					</a> </li>
+                                <li> <a href="">
+    						<i class="fa fa-desktop"></i> UI Elements
+    						<i class="fa arrow"></i>
+    					</a>
+                                    <ul>
+                                        <li> <a href="buttons.html">
+    								Buttons
+    							</a> </li>
+                                        <li> <a href="cards.html">
+    								Cards
+    							</a> </li>
+                                        <li> <a href="typography.html">
+    								Typography
+    							</a> </li>
+                                        <li> <a href="icons.html">
+    								Icons
+    							</a> </li>
+                                        <li> <a href="grid.html">
+    								Grid
+    							</a> </li>
+                                    </ul>
+                                </li>
+                                <li> <a href="">
+    						<i class="fa fa-file-text-o"></i> Pages
+    						<i class="fa arrow"></i>
+    					</a>
+                                    <ul>
+                                        <li> <a href="login.html">
+    								Login
+    							</a> </li>
+                                        <li> <a href="signup.html">
+    								Sign Up
+    							</a> </li>
+                                        <li> <a href="reset.html">
+    								Reset
+    							</a> </li>
+                                        <li> <a href="error-404.html">
+    								Error 404 App
+    							</a> </li>
+                                        <li> <a href="error-404-alt.html">
+    								Error 404 Global
+    							</a> </li>
+                                        <li> <a href="error-500.html">
+    								Error 500 App
+    							</a> </li>
+                                        <li> <a href="error-500-alt.html">
+    								Error 500 Global
+    							</a> </li>
+                                    </ul>
+                                </li>
+                                <li> <a href="https://github.com/modularcode/modular-admin-html">
+    						<i class="fa fa-github-alt"></i> Theme Docs
+    					</a> </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <footer class="sidebar-footer">
+                        <ul class="nav metismenu" id="customize-menu">
+                            <li>
+                                <ul>
+                                    <li class="customize">
+                                        <div class="customize-item">
+                                            <div class="row customize-header">
+                                                <div class="col-xs-4"> </div>
+                                                <div class="col-xs-4"> <label class="title">fixed</label> </div>
+                                                <div class="col-xs-4"> <label class="title">static</label> </div>
+                                            </div>
+                                            <div class="row hidden-md-down">
+                                                <div class="col-xs-4"> <label class="title">Sidebar:</label> </div>
+                                                <div class="col-xs-4"> <label>
+    				                        <input class="radio" type="radio" name="sidebarPosition" value="sidebar-fixed" >
+    				                        <span></span>
+    				                    </label> </div>
+                                                <div class="col-xs-4"> <label>
+    				                        <input class="radio" type="radio" name="sidebarPosition" value="">
+    				                        <span></span>
+    				                    </label> </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-xs-4"> <label class="title">Header:</label> </div>
+                                                <div class="col-xs-4"> <label>
+    				                        <input class="radio" type="radio" name="headerPosition" value="header-fixed">
+    				                        <span></span>
+    				                    </label> </div>
+                                                <div class="col-xs-4"> <label>
+    				                        <input class="radio" type="radio" name="headerPosition" value="">
+    				                        <span></span>
+    				                    </label> </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-xs-4"> <label class="title">Footer:</label> </div>
+                                                <div class="col-xs-4"> <label>
+    				                        <input class="radio" type="radio" name="footerPosition" value="footer-fixed">
+    				                        <span></span>
+    				                    </label> </div>
+                                                <div class="col-xs-4"> <label>
+    				                        <input class="radio" type="radio" name="footerPosition" value="">
+    				                        <span></span>
+    				                    </label> </div>
+                                            </div>
+                                        </div>
+                                        <div class="customize-item">
+                                            <ul class="customize-colors">
+                                                <li> <span class="color-item color-red" data-theme="red"></span> </li>
+                                                <li> <span class="color-item color-orange" data-theme="orange"></span> </li>
+                                                <li> <span class="color-item color-green active" data-theme=""></span> </li>
+                                                <li> <span class="color-item color-seagreen" data-theme="seagreen"></span> </li>
+                                                <li> <span class="color-item color-blue" data-theme="blue"></span> </li>
+                                                <li> <span class="color-item color-purple" data-theme="purple"></span> </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                </ul> <a href="">
+    					<i class="fa fa-cog"></i> Customize
+    				</a> </li>
+                        </ul>
+                    </footer>
+                </aside>
+                <div class="sidebar-overlay" id="sidebar-overlay"></div>
+                <article class="content items-list-page">
+                    <div class="title-search-block">
+                        <div class="title-block">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h3 class="title"> Items <a href="item-editor.html" class="btn btn-primary btn-sm rounded-s">
+						Add New
+					</a>
+                                        <!--
+				 -->
+                                        <div class="action dropdown"> <button class="btn  btn-sm rounded-s btn-secondary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							More actions...
+						</button>
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenu1"> <a class="dropdown-item" href="#"><i class="fa fa-pencil-square-o icon"></i>Mark as a draft</a> <a class="dropdown-item" href="#" data-toggle="modal" data-target="#confirm-modal"><i class="fa fa-close icon"></i>Delete</a>                                                </div>
+                                        </div>
+                                    </h3>
+                                    <p class="title-description"> List of sample items - e.g. books, movies, events, etc... </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="items-search">
+                            <form class="form-inline">
+                                <div class="input-group"> <input type="text" class="form-control boxed rounded-s" placeholder="Search for..."> <span class="input-group-btn">
+					<button class="btn btn-secondary rounded-s" type="button">
+						<i class="fa fa-search"></i>
+					</button>
+				</span> </div>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- <div class="card items"> -->
+                        <!-- <ul class="item-list striped"> -->
+                            <!-- <li class="item item-list-header hidden-sm-down"> -->
+                                <!-- <div class="item-row"> -->
+                                    <!-- <div class="item-col fixed item-col-check"> <label class="item-check" id="select-all-items"> -->
+						<!-- <input type="checkbox" class="checkbox"> -->
+						<!-- <span></span> -->
+					<!-- </label> </div> -->
+                                    <!-- <div class="item-col item-col-header fixed item-col-img md"> -->
+                                        <!-- <div> <span>Media</span> </div> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col item-col-header item-col-title"> -->
+                                        <!-- <div> <span>Name</span> </div> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col item-col-header item-col-sales"> -->
+                                        <!-- <div> <span>Sales</span> </div> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col item-col-header item-col-stats"> -->
+                                        <!-- <div class="no-overflow"> <span>Stats</span> </div> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col item-col-header item-col-category"> -->
+                                        <!-- <div class="no-overflow"> <span>Category</span> </div> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col item-col-header item-col-author"> -->
+                                        <!-- <div class="no-overflow"> <span>Author</span> </div> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col item-col-header item-col-date"> -->
+                                        <!-- <div> <span>Published</span> </div> -->
+                                    <!-- </div> -->
+                                    <!-- <!-- <div class="item-col item-col-header fixed item-col-actions-dropdown"> </div> --> -->
+                                <!-- </div> -->
+                            <!-- </li> -->
+                            <!-- <li class="item"> -->
+                                <!-- <div class="item-row"> -->
+                                    <!-- <div class="item-col fixed item-col-check"> <label class="item-check" id="select-all-items"> -->
+							<!-- <input type="checkbox" class="checkbox"> -->
+							<!-- <span></span> -->
+						<!-- </label> </div> -->
+                                    <!-- <div class="item-col fixed item-col-img md"> -->
+                                        <!-- <a href="item-editor.html"> -->
+                                            <!-- <div class="item-img rounded" style="background-image: url(https://s3.amazonaws.com/uifaces/faces/twitter/brad_frost/128.jpg)"></div> -->
+                                        <!-- </a> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col fixed pull-left item-col-title"> -->
+                                        <!-- <div class="item-heading">Name</div> -->
+                                        <!-- <div> -->
+                                            <!-- <a href="item-editor.html" class=""> -->
+                                                <!-- <h4 class="item-title"> 12 Myths Uncovered About IT &amp; Software </h4> -->
+                                            <!-- </a> -->
+                                        <!-- </div> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col item-col-sales"> -->
+                                        <!-- <div class="item-heading">Sales</div> -->
+                                        <!-- <div> 46323 </div> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col item-col-stats no-overflow"> -->
+                                        <!-- <div class="item-heading">Stats</div> -->
+                                        <!-- <div class="no-overflow"> -->
+                                            <!-- <div class="item-stats sparkline" data-type="bar"></div> -->
+                                        <!-- </div> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col item-col-category no-overflow"> -->
+                                        <!-- <div class="item-heading">Category</div> -->
+                                        <!-- <div class="no-overflow"> <a href="">Software</a> </div> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col item-col-author"> -->
+                                        <!-- <div class="item-heading">Author</div> -->
+                                        <!-- <div class="no-overflow"> <a href="">Meadow Katheryne</a> </div> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col item-col-date"> -->
+                                        <!-- <div class="item-heading">Published</div> -->
+                                        <!-- <div class="no-overflow"> 21 SEP 10:45 </div> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col fixed item-col-actions-dropdown"> -->
+                                        <!-- <div class="item-actions-dropdown"> <a class="item-actions-toggle-btn"> -->
+								<!-- <span class="inactive"> -->
+									<!-- <i class="fa fa-cog"></i> -->
+								<!-- </span> -->
+								<!-- <span class="active"> -->
+								<!-- <i class="fa fa-chevron-circle-right"></i> -->
+								<!-- </span> -->
+							<!-- </a> -->
+                                            <!-- <div class="item-actions-block"> -->
+                                                <!-- <ul class="item-actions-list"> -->
+                                                    <!-- <li> <a class="remove" href="#" data-toggle="modal" data-target="#confirm-modal"> -->
+                                            <!-- <i class="fa fa-trash-o "></i> -->
+                                        <!-- </a> </li> -->
+                                                    <!-- <li> <a class="edit" href="item-editor.html"> -->
+                                            <!-- <i class="fa fa-pencil"></i> -->
+                                        <!-- </a> </li> -->
+                                                <!-- </ul> -->
+                                            <!-- </div> -->
+                                        <!-- </div> -->
+                                    <!-- </div> -->
+                                <!-- </div> -->
+                            <!-- </li> -->
+                            <!-- <li class="item"> -->
+                                <!-- <div class="item-row"> -->
+                                    <!-- <div class="item-col fixed item-col-check"> <label class="item-check" id="select-all-items"> -->
+							<!-- <input type="checkbox" class="checkbox"> -->
+							<!-- <span></span> -->
+						<!-- </label> </div> -->
+                                    <!-- <div class="item-col fixed item-col-img md"> -->
+                                        <!-- <a href="item-editor.html"> -->
+                                            <!-- <div class="item-img rounded" style="background-image: url(https://s3.amazonaws.com/uifaces/faces/twitter/_everaldo/128.jpg)"></div> -->
+                                        <!-- </a> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col fixed pull-left item-col-title"> -->
+                                        <!-- <div class="item-heading">Name</div> -->
+                                        <!-- <div> -->
+                                            <!-- <a href="item-editor.html" class=""> -->
+                                                <!-- <h4 class="item-title"> 50% of things doesn&#x27;t really belongs to you </h4> -->
+                                            <!-- </a> -->
+                                        <!-- </div> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col item-col-sales"> -->
+                                        <!-- <div class="item-heading">Sales</div> -->
+                                        <!-- <div> 4567 </div> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col item-col-stats no-overflow"> -->
+                                        <!-- <div class="item-heading">Stats</div> -->
+                                        <!-- <div class="no-overflow"> -->
+                                            <!-- <div class="item-stats sparkline" data-type="bar"></div> -->
+                                        <!-- </div> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col item-col-category no-overflow"> -->
+                                        <!-- <div class="item-heading">Category</div> -->
+                                        <!-- <div class="no-overflow"> <a href="">Hardware</a> </div> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col item-col-author"> -->
+                                        <!-- <div class="item-heading">Author</div> -->
+                                        <!-- <div class="no-overflow"> <a href="">Alexander Sargssyan</a> </div> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col item-col-date"> -->
+                                        <!-- <div class="item-heading">Published</div> -->
+                                        <!-- <div class="no-overflow"> 21 SEP 10:45 </div> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col fixed item-col-actions-dropdown"> -->
+                                        <!-- <div class="item-actions-dropdown"> <a class="item-actions-toggle-btn"> -->
+								<!-- <span class="inactive"> -->
+									<!-- <i class="fa fa-cog"></i> -->
+								<!-- </span> -->
+								<!-- <span class="active"> -->
+								<!-- <i class="fa fa-chevron-circle-right"></i> -->
+								<!-- </span> -->
+							<!-- </a> -->
+                                            <!-- <div class="item-actions-block"> -->
+                                                <!-- <ul class="item-actions-list"> -->
+                                                    <!-- <li> <a class="remove" href="#" data-toggle="modal" data-target="#confirm-modal"> -->
+                                            <!-- <i class="fa fa-trash-o "></i> -->
+                                        <!-- </a> </li> -->
+                                                    <!-- <li> <a class="edit" href="item-editor.html"> -->
+                                            <!-- <i class="fa fa-pencil"></i> -->
+                                        <!-- </a> </li> -->
+                                                <!-- </ul> -->
+                                            <!-- </div> -->
+                                        <!-- </div> -->
+                                    <!-- </div> -->
+                                <!-- </div> -->
+                            <!-- </li> -->
+                            <!-- <li class="item"> -->
+                                <!-- <div class="item-row"> -->
+                                    <!-- <div class="item-col fixed item-col-check"> <label class="item-check" id="select-all-items"> -->
+							<!-- <input type="checkbox" class="checkbox"> -->
+							<!-- <span></span> -->
+						<!-- </label> </div> -->
+                                    <!-- <div class="item-col fixed item-col-img md"> -->
+                                        <!-- <a href="item-editor.html"> -->
+                                            <!-- <div class="item-img rounded" style="background-image: url(https://s3.amazonaws.com/uifaces/faces/twitter/eduardo_olv/128.jpg)"></div> -->
+                                        <!-- </a> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col fixed pull-left item-col-title"> -->
+                                        <!-- <div class="item-heading">Name</div> -->
+                                        <!-- <div> -->
+                                            <!-- <a href="item-editor.html" class=""> -->
+                                                <!-- <h4 class="item-title"> Vestibulum tincidunt amet laoreet mauris sit sem aliquam cras maecenas vel aliquam. </h4> -->
+                                            <!-- </a> -->
+                                        <!-- </div> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col item-col-sales"> -->
+                                        <!-- <div class="item-heading">Sales</div> -->
+                                        <!-- <div> 854 </div> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col item-col-stats no-overflow"> -->
+                                        <!-- <div class="item-heading">Stats</div> -->
+                                        <!-- <div class="no-overflow"> -->
+                                            <!-- <div class="item-stats sparkline" data-type="bar"></div> -->
+                                        <!-- </div> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col item-col-category no-overflow"> -->
+                                        <!-- <div class="item-heading">Category</div> -->
+                                        <!-- <div class="no-overflow"> <a href="">Anywhere</a> </div> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col item-col-author"> -->
+                                        <!-- <div class="item-heading">Author</div> -->
+                                        <!-- <div class="no-overflow"> <a href="">Some Long Author Name</a> </div> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col item-col-date"> -->
+                                        <!-- <div class="item-heading">Published</div> -->
+                                        <!-- <div class="no-overflow"> 21 SEP 10:45 </div> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col fixed item-col-actions-dropdown"> -->
+                                        <!-- <div class="item-actions-dropdown"> <a class="item-actions-toggle-btn"> -->
+								<!-- <span class="inactive"> -->
+									<!-- <i class="fa fa-cog"></i> -->
+								<!-- </span> -->
+								<!-- <span class="active"> -->
+								<!-- <i class="fa fa-chevron-circle-right"></i> -->
+								<!-- </span> -->
+							<!-- </a> -->
+                                            <!-- <div class="item-actions-block"> -->
+                                                <!-- <ul class="item-actions-list"> -->
+                                                    <!-- <li> <a class="remove" href="#" data-toggle="modal" data-target="#confirm-modal"> -->
+                                            <!-- <i class="fa fa-trash-o "></i> -->
+                                        <!-- </a> </li> -->
+                                                    <!-- <li> <a class="edit" href="item-editor.html"> -->
+                                            <!-- <i class="fa fa-pencil"></i> -->
+                                        <!-- </a> </li> -->
+                                                <!-- </ul> -->
+                                            <!-- </div> -->
+                                        <!-- </div> -->
+                                    <!-- </div> -->
+                                <!-- </div> -->
+                            <!-- </li> -->
+                            <!-- <li class="item"> -->
+                                <!-- <div class="item-row"> -->
+                                    <!-- <div class="item-col fixed item-col-check"> <label class="item-check" id="select-all-items"> -->
+							<!-- <input type="checkbox" class="checkbox"> -->
+							<!-- <span></span> -->
+						<!-- </label> </div> -->
+                                    <!-- <div class="item-col fixed item-col-img md"> -->
+                                        <!-- <a href="item-editor.html"> -->
+                                            <!-- <div class="item-img rounded" style="background-image: url(https://s3.amazonaws.com/uifaces/faces/twitter/why_this/128.jpg)"></div> -->
+                                        <!-- </a> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col fixed pull-left item-col-title"> -->
+                                        <!-- <div class="item-heading">Name</div> -->
+                                        <!-- <div> -->
+                                            <!-- <a href="item-editor.html" class=""> -->
+                                                <!-- <h4 class="item-title"> Lorem Ipsum is not simply random text </h4> -->
+                                            <!-- </a> -->
+                                        <!-- </div> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col item-col-sales"> -->
+                                        <!-- <div class="item-heading">Sales</div> -->
+                                        <!-- <div> 1861 </div> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col item-col-stats no-overflow"> -->
+                                        <!-- <div class="item-heading">Stats</div> -->
+                                        <!-- <div class="no-overflow"> -->
+                                            <!-- <div class="item-stats sparkline" data-type="bar"></div> -->
+                                        <!-- </div> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col item-col-category no-overflow"> -->
+                                        <!-- <div class="item-heading">Category</div> -->
+                                        <!-- <div class="no-overflow"> <a href="">Something</a> </div> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col item-col-author"> -->
+                                        <!-- <div class="item-heading">Author</div> -->
+                                        <!-- <div class="no-overflow"> <a href="">Willard Bennett</a> </div> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col item-col-date"> -->
+                                        <!-- <div class="item-heading">Published</div> -->
+                                        <!-- <div class="no-overflow"> 21 SEP 10:45 </div> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col fixed item-col-actions-dropdown"> -->
+                                        <!-- <div class="item-actions-dropdown"> <a class="item-actions-toggle-btn"> -->
+								<!-- <span class="inactive"> -->
+									<!-- <i class="fa fa-cog"></i> -->
+								<!-- </span> -->
+								<!-- <span class="active"> -->
+								<!-- <i class="fa fa-chevron-circle-right"></i> -->
+								<!-- </span> -->
+							<!-- </a> -->
+                                            <!-- <div class="item-actions-block"> -->
+                                                <!-- <ul class="item-actions-list"> -->
+                                                    <!-- <li> <a class="remove" href="#" data-toggle="modal" data-target="#confirm-modal"> -->
+                                            <!-- <i class="fa fa-trash-o "></i> -->
+                                        <!-- </a> </li> -->
+                                                    <!-- <li> <a class="edit" href="item-editor.html"> -->
+                                            <!-- <i class="fa fa-pencil"></i> -->
+                                        <!-- </a> </li> -->
+                                                <!-- </ul> -->
+                                            <!-- </div> -->
+                                        <!-- </div> -->
+                                    <!-- </div> -->
+                                <!-- </div> -->
+                            <!-- </li> -->
+                            <!-- <li class="item"> -->
+                                <!-- <div class="item-row"> -->
+                                    <!-- <div class="item-col fixed item-col-check"> <label class="item-check" id="select-all-items"> -->
+							<!-- <input type="checkbox" class="checkbox"> -->
+							<!-- <span></span> -->
+						<!-- </label> </div> -->
+                                    <!-- <div class="item-col fixed item-col-img md"> -->
+                                        <!-- <a href="item-editor.html"> -->
+                                            <!-- <div class="item-img rounded" style="background-image: url(https://s3.amazonaws.com/uifaces/faces/twitter/w7download/128.jpg)"></div> -->
+                                        <!-- </a> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col fixed pull-left item-col-title"> -->
+                                        <!-- <div class="item-heading">Name</div> -->
+                                        <!-- <div> -->
+                                            <!-- <a href="item-editor.html" class=""> -->
+                                                <!-- <h4 class="item-title"> Ut dui quis amet curabitur vestibulum </h4> -->
+                                            <!-- </a> -->
+                                        <!-- </div> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col item-col-sales"> -->
+                                        <!-- <div class="item-heading">Sales</div> -->
+                                        <!-- <div> 7891 </div> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col item-col-stats no-overflow"> -->
+                                        <!-- <div class="item-heading">Stats</div> -->
+                                        <!-- <div class="no-overflow"> -->
+                                            <!-- <div class="item-stats sparkline" data-type="bar"></div> -->
+                                        <!-- </div> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col item-col-category no-overflow"> -->
+                                        <!-- <div class="item-heading">Category</div> -->
+                                        <!-- <div class="no-overflow"> <a href="">Something Else</a> </div> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col item-col-author"> -->
+                                        <!-- <div class="item-heading">Author</div> -->
+                                        <!-- <div class="no-overflow"> <a href="">Ivy Lorrie</a> </div> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col item-col-date"> -->
+                                        <!-- <div class="item-heading">Published</div> -->
+                                        <!-- <div class="no-overflow"> 21 SEP 10:45 </div> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col fixed item-col-actions-dropdown"> -->
+                                        <!-- <div class="item-actions-dropdown"> <a class="item-actions-toggle-btn"> -->
+								<!-- <span class="inactive"> -->
+									<!-- <i class="fa fa-cog"></i> -->
+								<!-- </span> -->
+								<!-- <span class="active"> -->
+								<!-- <i class="fa fa-chevron-circle-right"></i> -->
+								<!-- </span> -->
+							<!-- </a> -->
+                                            <!-- <div class="item-actions-block"> -->
+                                                <!-- <ul class="item-actions-list"> -->
+                                                    <!-- <li> <a class="remove" href="#" data-toggle="modal" data-target="#confirm-modal"> -->
+                                            <!-- <i class="fa fa-trash-o "></i> -->
+                                        <!-- </a> </li> -->
+                                                    <!-- <li> <a class="edit" href="item-editor.html"> -->
+                                            <!-- <i class="fa fa-pencil"></i> -->
+                                        <!-- </a> </li> -->
+                                                <!-- </ul> -->
+                                            <!-- </div> -->
+                                        <!-- </div> -->
+                                    <!-- </div> -->
+                                <!-- </div> -->
+                            <!-- </li> -->
+                            <!-- <li class="item"> -->
+                                <!-- <div class="item-row"> -->
+                                    <!-- <div class="item-col fixed item-col-check"> <label class="item-check" id="select-all-items"> -->
+							<!-- <input type="checkbox" class="checkbox"> -->
+							<!-- <span></span> -->
+						<!-- </label> </div> -->
+                                    <!-- <div class="item-col fixed item-col-img md"> -->
+                                        <!-- <a href="item-editor.html"> -->
+                                            <!-- <div class="item-img rounded" style="background-image: url(https://s3.amazonaws.com/uifaces/faces/twitter/pankogut/128.jpg)"></div> -->
+                                        <!-- </a> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col fixed pull-left item-col-title"> -->
+                                        <!-- <div class="item-heading">Name</div> -->
+                                        <!-- <div> -->
+                                            <!-- <a href="item-editor.html" class=""> -->
+                                                <!-- <h4 class="item-title"> Mus sociosqu etiam autem rutrum at molestie elit pulvinar </h4> -->
+                                            <!-- </a> -->
+                                        <!-- </div> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col item-col-sales"> -->
+                                        <!-- <div class="item-heading">Sales</div> -->
+                                        <!-- <div> 95150 </div> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col item-col-stats no-overflow"> -->
+                                        <!-- <div class="item-heading">Stats</div> -->
+                                        <!-- <div class="no-overflow"> -->
+                                            <!-- <div class="item-stats sparkline" data-type="bar"></div> -->
+                                        <!-- </div> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col item-col-category no-overflow"> -->
+                                        <!-- <div class="item-heading">Category</div> -->
+                                        <!-- <div class="no-overflow"> <a href="">Other</a> </div> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col item-col-author"> -->
+                                        <!-- <div class="item-heading">Author</div> -->
+                                        <!-- <div class="no-overflow"> <a href="">Evander Archie</a> </div> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col item-col-date"> -->
+                                        <!-- <div class="item-heading">Published</div> -->
+                                        <!-- <div class="no-overflow"> 21 SEP 10:45 </div> -->
+                                    <!-- </div> -->
+                                    <!-- <div class="item-col fixed item-col-actions-dropdown"> -->
+                                        <!-- <div class="item-actions-dropdown"> <a class="item-actions-toggle-btn"> -->
+								<!-- <span class="inactive"> -->
+									<!-- <i class="fa fa-cog"></i> -->
+								<!-- </span> -->
+								<!-- <span class="active"> -->
+								<!-- <i class="fa fa-chevron-circle-right"></i> -->
+								<!-- </span> -->
+							<!-- </a> -->
+                                            <!-- <div class="item-actions-block"> -->
+                                                <!-- <ul class="item-actions-list"> -->
+                                                    <!-- <li> <a class="remove" href="#" data-toggle="modal" data-target="#confirm-modal"> -->
+                                            <!-- <i class="fa fa-trash-o "></i> -->
+                                        <!-- </a> </li> -->
+                                                    <!-- <li> <a class="edit" href="item-editor.html"> -->
+                                            <!-- <i class="fa fa-pencil"></i> -->
+                                        <!-- </a> </li> -->
+                                                <!-- </ul> -->
+                                            <!-- </div> -->
+                                        <!-- </div> -->
+                                    <!-- </div> -->
+                                <!-- </div> -->
+                            <!-- </li> -->
+                        <!-- </ul> -->
+                    <!-- </div> -->
+                    <!-- <nav class="text-xs-right"> -->
+                        <!-- <ul class="pagination"> -->
+                            <!-- <li class="page-item"> <a class="page-link" href=""> -->
+				<!-- Prev -->
+			<!-- </a> </li> -->
+                            <!-- <li class="page-item active"> <a class="page-link" href=""> -->
+				<!-- 1 -->
+			<!-- </a> </li> -->
+                            <!-- <li class="page-item"> <a class="page-link" href=""> -->
+				<!-- 2 -->
+			<!-- </a> </li> -->
+                            <!-- <li class="page-item"> <a class="page-link" href=""> -->
+				<!-- 3 -->
+			<!-- </a> </li> -->
+                            <!-- <li class="page-item"> <a class="page-link" href=""> -->
+				<!-- 4 -->
+			<!-- </a> </li> -->
+                            <!-- <li class="page-item"> <a class="page-link" href=""> -->
+				<!-- 5 -->
+			<!-- </a> </li> -->
+                            <!-- <li class="page-item"> <a class="page-link" href=""> -->
+				<!-- Next -->
+			<!-- </a> </li> -->
+                        <!-- </ul> -->
+                    <!-- </nav> -->
+					<div id="paging_container9" class="container">
+					<div class="page_navigation"></div>
+					<table id="example" class="table table-striped table-bordered" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Position</th>
+                <th>Office</th>
+                <th>Age</th>
+                <th>Start date</th>
+                <th>Salary</th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <th>Name</th>
+                <th>Position</th>
+                <th>Office</th>
+                <th>Age</th>
+                <th>Start date</th>
+                <th>Salary</th>
+            </tr>
+        </tfoot>
+        <tbody>
+            <tr>
+                <td>Tiger Nixon</td>
+                <td>System Architect</td>
+                <td>Edinburgh</td>
+                <td>61</td>
+                <td>2011/04/25</td>
+                <td>$320,800</td>
+            </tr>
+            <tr>
+                <td>Garrett Winters</td>
+                <td>Accountant</td>
+                <td>Tokyo</td>
+                <td>63</td>
+                <td>2011/07/25</td>
+                <td>$170,750</td>
+            </tr>
+            <tr>
+                <td>Ashton Cox</td>
+                <td>Junior Technical Author</td>
+                <td>San Francisco</td>
+                <td>66</td>
+                <td>2009/01/12</td>
+                <td>$86,000</td>
+            </tr>
+            <tr>
+                <td>Cedric Kelly</td>
+                <td>Senior Javascript Developer</td>
+                <td>Edinburgh</td>
+                <td>22</td>
+                <td>2012/03/29</td>
+                <td>$433,060</td>
+            </tr>
+            <tr>
+                <td>Airi Satou</td>
+                <td>Accountant</td>
+                <td>Tokyo</td>
+                <td>33</td>
+                <td>2008/11/28</td>
+                <td>$162,700</td>
+            </tr>
+            <tr>
+                <td>Brielle Williamson</td>
+                <td>Integration Specialist</td>
+                <td>New York</td>
+                <td>61</td>
+                <td>2012/12/02</td>
+                <td>$372,000</td>
+            </tr>
+            <tr>
+                <td>Herrod Chandler</td>
+                <td>Sales Assistant</td>
+                <td>San Francisco</td>
+                <td>59</td>
+                <td>2012/08/06</td>
+                <td>$137,500</td>
+            </tr>
+            <tr>
+                <td>Rhona Davidson</td>
+                <td>Integration Specialist</td>
+                <td>Tokyo</td>
+                <td>55</td>
+                <td>2010/10/14</td>
+                <td>$327,900</td>
+            </tr>
+            <tr>
+                <td>Colleen Hurst</td>
+                <td>Javascript Developer</td>
+                <td>San Francisco</td>
+                <td>39</td>
+                <td>2009/09/15</td>
+                <td>$205,500</td>
+            </tr>
+            <tr>
+                <td>Sonya Frost</td>
+                <td>Software Engineer</td>
+                <td>Edinburgh</td>
+                <td>23</td>
+                <td>2008/12/13</td>
+                <td>$103,600</td>
+            </tr>
+            <tr>
+                <td>Jena Gaines</td>
+                <td>Office Manager</td>
+                <td>London</td>
+                <td>30</td>
+                <td>2008/12/19</td>
+                <td>$90,560</td>
+            </tr>
+            <tr>
+                <td>Quinn Flynn</td>
+                <td>Support Lead</td>
+                <td>Edinburgh</td>
+                <td>22</td>
+                <td>2013/03/03</td>
+                <td>$342,000</td>
+            </tr>
+            <tr>
+                <td>Charde Marshall</td>
+                <td>Regional Director</td>
+                <td>San Francisco</td>
+                <td>36</td>
+                <td>2008/10/16</td>
+                <td>$470,600</td>
+            </tr>
+            <tr>
+                <td>Haley Kennedy</td>
+                <td>Senior Marketing Designer</td>
+                <td>London</td>
+                <td>43</td>
+                <td>2012/12/18</td>
+                <td>$313,500</td>
+            </tr>
+            <tr>
+                <td>Tatyana Fitzpatrick</td>
+                <td>Regional Director</td>
+                <td>London</td>
+                <td>19</td>
+                <td>2010/03/17</td>
+                <td>$385,750</td>
+            </tr>
+            <tr>
+                <td>Michael Silva</td>
+                <td>Marketing Designer</td>
+                <td>London</td>
+                <td>66</td>
+                <td>2012/11/27</td>
+                <td>$198,500</td>
+            </tr>
+            <tr>
+                <td>Paul Byrd</td>
+                <td>Chief Financial Officer (CFO)</td>
+                <td>New York</td>
+                <td>64</td>
+                <td>2010/06/09</td>
+                <td>$725,000</td>
+            </tr>
+            <tr>
+                <td>Gloria Little</td>
+                <td>Systems Administrator</td>
+                <td>New York</td>
+                <td>59</td>
+                <td>2009/04/10</td>
+                <td>$237,500</td>
+            </tr>
+            <tr>
+                <td>Bradley Greer</td>
+                <td>Software Engineer</td>
+                <td>London</td>
+                <td>41</td>
+                <td>2012/10/13</td>
+                <td>$132,000</td>
+            </tr>
+            <tr>
+                <td>Dai Rios</td>
+                <td>Personnel Lead</td>
+                <td>Edinburgh</td>
+                <td>35</td>
+                <td>2012/09/26</td>
+                <td>$217,500</td>
+            </tr>
+            <tr>
+                <td>Jenette Caldwell</td>
+                <td>Development Lead</td>
+                <td>New York</td>
+                <td>30</td>
+                <td>2011/09/03</td>
+                <td>$345,000</td>
+            </tr>
+            <tr>
+                <td>Yuri Berry</td>
+                <td>Chief Marketing Officer (CMO)</td>
+                <td>New York</td>
+                <td>40</td>
+                <td>2009/06/25</td>
+                <td>$675,000</td>
+            </tr>
+            <tr>
+                <td>Caesar Vance</td>
+                <td>Pre-Sales Support</td>
+                <td>New York</td>
+                <td>21</td>
+                <td>2011/12/12</td>
+                <td>$106,450</td>
+            </tr>
+            <tr>
+                <td>Doris Wilder</td>
+                <td>Sales Assistant</td>
+                <td>Sidney</td>
+                <td>23</td>
+                <td>2010/09/20</td>
+                <td>$85,600</td>
+            </tr>
+            <tr>
+                <td>Angelica Ramos</td>
+                <td>Chief Executive Officer (CEO)</td>
+                <td>London</td>
+                <td>47</td>
+                <td>2009/10/09</td>
+                <td>$1,200,000</td>
+            </tr>
+            <tr>
+                <td>Gavin Joyce</td>
+                <td>Developer</td>
+                <td>Edinburgh</td>
+                <td>42</td>
+                <td>2010/12/22</td>
+                <td>$92,575</td>
+            </tr>
+            <tr>
+                <td>Jennifer Chang</td>
+                <td>Regional Director</td>
+                <td>Singapore</td>
+                <td>28</td>
+                <td>2010/11/14</td>
+                <td>$357,650</td>
+            </tr>
+            <tr>
+                <td>Brenden Wagner</td>
+                <td>Software Engineer</td>
+                <td>San Francisco</td>
+                <td>28</td>
+                <td>2011/06/07</td>
+                <td>$206,850</td>
+            </tr>
+            <tr>
+                <td>Fiona Green</td>
+                <td>Chief Operating Officer (COO)</td>
+                <td>San Francisco</td>
+                <td>48</td>
+                <td>2010/03/11</td>
+                <td>$850,000</td>
+            </tr>
+            <tr>
+                <td>Shou Itou</td>
+                <td>Regional Marketing</td>
+                <td>Tokyo</td>
+                <td>20</td>
+                <td>2011/08/14</td>
+                <td>$163,000</td>
+            </tr>
+            <tr>
+                <td>Michelle House</td>
+                <td>Integration Specialist</td>
+                <td>Sidney</td>
+                <td>37</td>
+                <td>2011/06/02</td>
+                <td>$95,400</td>
+            </tr>
+            <tr>
+                <td>Suki Burks</td>
+                <td>Developer</td>
+                <td>London</td>
+                <td>53</td>
+                <td>2009/10/22</td>
+                <td>$114,500</td>
+            </tr>
+            <tr>
+                <td>Prescott Bartlett</td>
+                <td>Technical Author</td>
+                <td>London</td>
+                <td>27</td>
+                <td>2011/05/07</td>
+                <td>$145,000</td>
+            </tr>
+            <tr>
+                <td>Gavin Cortez</td>
+                <td>Team Leader</td>
+                <td>San Francisco</td>
+                <td>22</td>
+                <td>2008/10/26</td>
+                <td>$235,500</td>
+            </tr>
+            <tr>
+                <td>Martena Mccray</td>
+                <td>Post-Sales support</td>
+                <td>Edinburgh</td>
+                <td>46</td>
+                <td>2011/03/09</td>
+                <td>$324,050</td>
+            </tr>
+            <tr>
+                <td>Unity Butler</td>
+                <td>Marketing Designer</td>
+                <td>San Francisco</td>
+                <td>47</td>
+                <td>2009/12/09</td>
+                <td>$85,675</td>
+            </tr>
+            <tr>
+                <td>Howard Hatfield</td>
+                <td>Office Manager</td>
+                <td>San Francisco</td>
+                <td>51</td>
+                <td>2008/12/16</td>
+                <td>$164,500</td>
+            </tr>
+            <tr>
+                <td>Hope Fuentes</td>
+                <td>Secretary</td>
+                <td>San Francisco</td>
+                <td>41</td>
+                <td>2010/02/12</td>
+                <td>$109,850</td>
+            </tr>
+            <tr>
+                <td>Vivian Harrell</td>
+                <td>Financial Controller</td>
+                <td>San Francisco</td>
+                <td>62</td>
+                <td>2009/02/14</td>
+                <td>$452,500</td>
+            </tr>
+            <tr>
+                <td>Timothy Mooney</td>
+                <td>Office Manager</td>
+                <td>London</td>
+                <td>37</td>
+                <td>2008/12/11</td>
+                <td>$136,200</td>
+            </tr>
+            <tr>
+                <td>Jackson Bradshaw</td>
+                <td>Director</td>
+                <td>New York</td>
+                <td>65</td>
+                <td>2008/09/26</td>
+                <td>$645,750</td>
+            </tr>
+            <tr>
+                <td>Olivia Liang</td>
+                <td>Support Engineer</td>
+                <td>Singapore</td>
+                <td>64</td>
+                <td>2011/02/03</td>
+                <td>$234,500</td>
+            </tr>
+            <tr>
+                <td>Bruno Nash</td>
+                <td>Software Engineer</td>
+                <td>London</td>
+                <td>38</td>
+                <td>2011/05/03</td>
+                <td>$163,500</td>
+            </tr>
+            <tr>
+                <td>Sakura Yamamoto</td>
+                <td>Support Engineer</td>
+                <td>Tokyo</td>
+                <td>37</td>
+                <td>2009/08/19</td>
+                <td>$139,575</td>
+            </tr>
+            <tr>
+                <td>Thor Walton</td>
+                <td>Developer</td>
+                <td>New York</td>
+                <td>61</td>
+                <td>2013/08/11</td>
+                <td>$98,540</td>
+            </tr>
+            <tr>
+                <td>Finn Camacho</td>
+                <td>Support Engineer</td>
+                <td>San Francisco</td>
+                <td>47</td>
+                <td>2009/07/07</td>
+                <td>$87,500</td>
+            </tr>
+            <tr>
+                <td>Serge Baldwin</td>
+                <td>Data Coordinator</td>
+                <td>Singapore</td>
+                <td>64</td>
+                <td>2012/04/09</td>
+                <td>$138,575</td>
+            </tr>
+            <tr>
+                <td>Zenaida Frank</td>
+                <td>Software Engineer</td>
+                <td>New York</td>
+                <td>63</td>
+                <td>2010/01/04</td>
+                <td>$125,250</td>
+            </tr>
+            <tr>
+                <td>Zorita Serrano</td>
+                <td>Software Engineer</td>
+                <td>San Francisco</td>
+                <td>56</td>
+                <td>2012/06/01</td>
+                <td>$115,000</td>
+            </tr>
+            <tr>
+                <td>Jennifer Acosta</td>
+                <td>Junior Javascript Developer</td>
+                <td>Edinburgh</td>
+                <td>43</td>
+                <td>2013/02/01</td>
+                <td>$75,650</td>
+            </tr>
+            <tr>
+                <td>Cara Stevens</td>
+                <td>Sales Assistant</td>
+                <td>New York</td>
+                <td>46</td>
+                <td>2011/12/06</td>
+                <td>$145,600</td>
+            </tr>
+            <tr>
+                <td>Hermione Butler</td>
+                <td>Regional Director</td>
+                <td>London</td>
+                <td>47</td>
+                <td>2011/03/21</td>
+                <td>$356,250</td>
+            </tr>
+            <tr>
+                <td>Lael Greer</td>
+                <td>Systems Administrator</td>
+                <td>London</td>
+                <td>21</td>
+                <td>2009/02/27</td>
+                <td>$103,500</td>
+            </tr>
+            <tr>
+                <td>Jonas Alexander</td>
+                <td>Developer</td>
+                <td>San Francisco</td>
+                <td>30</td>
+                <td>2010/07/14</td>
+                <td>$86,500</td>
+            </tr>
+            <tr>
+                <td>Shad Decker</td>
+                <td>Regional Director</td>
+                <td>Edinburgh</td>
+                <td>51</td>
+                <td>2008/11/13</td>
+                <td>$183,000</td>
+            </tr>
+            <tr>
+                <td>Michael Bruce</td>
+                <td>Javascript Developer</td>
+                <td>Singapore</td>
+                <td>29</td>
+                <td>2011/06/27</td>
+                <td>$183,000</td>
+            </tr>
+            <tr>
+                <td>Donna Snider</td>
+                <td>Customer Support</td>
+                <td>New York</td>
+                <td>27</td>
+                <td>2011/01/25</td>
+                <td>$112,000</td>
+            </tr>
+        </tbody>
+    </table>
+	</div>
+					
+                </article>
+                <footer class="footer">
+                    <div class="footer-block buttons"> <iframe class="footer-github-btn" src="https://ghbtns.com/github-btn.html?user=modularcode&repo=modular-admin-html&type=star&count=true" frameborder="0" scrolling="0" width="140px" height="20px"></iframe> </div>
+                    <div class="footer-block author">
+                        <ul>
+                            <li> created by <a href="https://github.com/modularcode">ModularCode</a> </li>
+                            <li> <a href="https://github.com/modularcode/modular-admin-html#get-in-touch">get in touch</a> </li>
+                        </ul>
+                    </div>
+                </footer>
+                <div class="modal fade" id="modal-media">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header"> <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+    					<span aria-hidden="true">&times;</span>
+    					<span class="sr-only">Close</span>
+    				</button>
+                                <h4 class="modal-title">Media Library</h4>
+                            </div>
+                            <div class="modal-body modal-tab-container">
+                                <ul class="nav nav-tabs modal-tabs" role="tablist">
+                                    <li class="nav-item"> <a class="nav-link" href="#gallery" data-toggle="tab" role="tab">Gallery</a> </li>
+                                    <li class="nav-item"> <a class="nav-link active" href="#upload" data-toggle="tab" role="tab">Upload</a> </li>
+                                </ul>
+                                <div class="tab-content modal-tab-content">
+                                    <div class="tab-pane fade" id="gallery" role="tabpanel">
+                                        <div class="images-container">
+                                            <div class="row"> </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade active in" id="upload" role="tabpanel">
+                                        <div class="upload-container">
+                                            <div id="dropzone">
+                                                <form action="/" method="POST" enctype="multipart/form-data" class="dropzone needsclick dz-clickable" id="demo-upload">
+                                                    <div class="dz-message-block">
+                                                        <div class="dz-message needsclick"> Drop files here or click to upload. </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer"> <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> <button type="button" class="btn btn-primary">Insert Selected</button> </div>
+                        </div>
+                        <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                </div>
+                <!-- /.modal -->
+                <div class="modal fade" id="confirm-modal">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header"> <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+    					<span aria-hidden="true">&times;</span>
+    				</button>
+                                <h4 class="modal-title"><i class="fa fa-warning"></i> Alert</h4>
+                            </div>
+                            <div class="modal-body">
+                                <p>Are you sure want to do this?</p>
+                            </div>
+                            <div class="modal-footer"> <button type="button" class="btn btn-primary" data-dismiss="modal">Yes</button> <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button> </div>
+                        </div>
+                        <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                </div>
+                <!-- /.modal -->
+            </div>
+        </div>
+        <!-- Reference block for JS -->
+        <div class="ref" id="ref">
+            <div class="color-primary"></div>
+            <div class="chart">
+                <div class="color-primary"></div>
+                <div class="color-secondary"></div>
+            </div>
+        </div>
+        <script src="js/vendor.js"></script>
+        <script src="js/app.js"></script>
+    </body>
+
+</html>
